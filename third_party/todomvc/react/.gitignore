@@ -1,5 +1,5 @@
 node_modules/director
-!node_modules/director/build/director.js
+!node_modules/director/out/director.js
 
 node_modules/react
 !node_modules/react/dist/react-with-addons.js

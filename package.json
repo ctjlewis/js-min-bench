@@ -1,35 +1,42 @@
 {
-  "name": "bench",
+  "name": "js-min-bench",
   "version": "1.0.0",
-  "description": "compare js minifiers",
-  "main": "run.js",
+  "description": "Benchmark different ES compilers and minifiers.",
+  "bin": "bin/js-min-bench",
+  "main": "out/bin/main.js",
   "dependencies": {
     "chai": "^4.2.0",
-    "commander": "^2.12.2",
-    "mocha": "^6.1.4",
-    "puppeteer": "^1.14.0",
-    "terser": "^3.17.0",
-    "uglify-js": "^3.5.6"
+    "chrome-launcher": "^0.13.4",
+    "commander": "^6.2.1",
+    "lighthouse": "^7.0.0",
+    "mocha": "^8.2.1",
+    "plotly": "^1.0.6",
+    "puppeteer": "^5.5.0",
+    "terser": "^5.5.1",
+    "uglify-js": "^3.12.4"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
-    "@types/mocha": "^5.2.6",
-    "@types/node": "^8.0.58",
-    "@types/puppeteer": "^1.12.3",
-    "prettier": "1.9.2",
-    "typescript": "^3.4.4"
-  },
-  "optionalDependencies": {
-    "google-closure-compiler-linux": "^20190415.0.0",
-    "google-closure-compiler-osx": "^20190415.0.0"
+    "@types/mocha": "^8.2.0",
+    "@types/node": "^14.14.20",
+    "@types/puppeteer": "^5.4.2",
+    "google-closure-compiler": "^20210106.0.0",
+    "prettier": "2.2.1",
+    "ts-node": "^9.1.1",
+    "ts-node-dev": "^1.1.1",
+    "typescript": "^4.1.3"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "fmt": "prettier --write *.md src/*.ts third_party/**/*.md third_party/*/test.ts",
-    "watch": "tsc -w",
-    "build": "tsc",
-    "render": "node build/src/render.js > index.html",
-    "bench": "node build/src/run.js && node build/src/render.js > index.html"
+    "local": "yarn build && node out/bin/main.js",
+    "local-dev": "yarn build --sourceMap && node --inspect out/bin/main.js",
+    "build": "yarn fmt && tsc",
+    "clean": "rm -rf out/ && rm -rf out/",
+    "test": "yarn local run",
+    "test-todo": "yarn test --inputFilter todomvc",
+    "test-todo-dev": "yarn local-dev run --inputFilter todomvc",
+    "fmt": "prettier --write *.md src/**/*.ts third_party/**/*.md third_party/**/test.ts",
+    "serve": "yarn local serve",
+    "watch": "tsc -w"
   },
   "author": "",
   "license": "Apache-2.0"

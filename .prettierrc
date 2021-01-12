@@ -1,5 +1,6 @@
 {
     "singleQuote": true,
-    "bracketSpacing": false,
-    "proseWrap": "always"
+    "bracketSpacing": true,
+    "proseWrap": "always",
+    "tabWidth": 2
 }

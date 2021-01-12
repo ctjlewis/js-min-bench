@@ -2,11 +2,13 @@ import * as http from 'http';
 import * as url from 'url';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as commander from 'commander';
+
+import * as metadata from '../specs/metadata';
+import { ExperimentConfiguration } from '../specs/json';
 
 export class WebServer {
   server = http.createServer(this.handler.bind(this));
-  listening: Promise<void> = new Promise(resolve => {
+  listening: Promise<void> = new Promise((resolve) => {
     this.server.on('listening', () => {
       resolve();
     });
@@ -23,14 +25,10 @@ export class WebServer {
     if (reqPath.endsWith('/')) reqPath += 'index.html';
 
     const remap = this.remaps.get(reqPath);
-    if (remap) {
-      reqPath = path.normalize(remap);
-    } else {
-      reqPath = path.join(this.root, reqPath);
-    }
+    reqPath = remap ? path.normalize(remap) : path.join(this.root, reqPath);
 
     const file = fs.createReadStream(reqPath);
-    file.on('error', err => {
+    file.on('error', (err) => {
       serveError(500, err.toString());
     });
     file.pipe(res);
@@ -47,7 +45,7 @@ export class WebServer {
   }
 
   stop(): Promise<void> {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       this.server.close(() => {
         resolve();
       });
@@ -55,7 +53,7 @@ export class WebServer {
   }
 
   cmdline(): string {
-    let cmd = `node build/src/web_server.js --root=${this.root}`;
+    let cmd = `node out/src/web_server.js --root=${this.root}`;
     for (const [src, dst] of this.remaps) {
       cmd += ` --remap=${src}=${dst}`;
     }
@@ -63,17 +61,25 @@ export class WebServer {
   }
 }
 
-if (require.main === module) {
-  commander
-    .option('--root <path>', 'root dir to serve')
-    .option('--remap <urlpath=filepath>', 'remap request path')
-    .parse(process.argv);
+export async function serve(configuration?: ExperimentConfiguration) {
+  /**
+   * Initialize a default configuration if there isn't one. Load the metadata
+   * for the given experiment.
+   */
+  if (!configuration) configuration = new ExperimentConfiguration();
+  const config = metadata.js[configuration.experimentIdentifier];
 
-  const server = new WebServer(commander.root || '.');
-  if (commander.remap) {
-    const [src, dst] = commander.remap.split('=');
-    server.remaps.set(src, dst);
-  }
-  server.run(9000);
-  console.log('listening on :9000');
+  /**
+   * Server variables.
+   */
+  const server = new WebServer(config?.test?.webroot || '');
+  const port = 9000;
+  const bundlePath = `out/data/${configuration.toString()}`;
+
+  console.log(`Mapping bundle.js to ${bundlePath}`);
+  console.log(`Serving at: http://localhost:${port}`);
+
+  server.remaps.set('/bundle.js', bundlePath);
+  await server.run(port);
+  return server;
 }

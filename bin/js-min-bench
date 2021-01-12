@@ -1,0 +1,5 @@
+#!/usr/bin/env node
+/**
+ * This file just exists to have `chmod +x` permissions and include the shebang.
+ */
+require('../out/bin/main.js');

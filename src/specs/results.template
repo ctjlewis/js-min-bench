@@ -3,6 +3,7 @@
 
 <head>
   <title>js-min-bench minifier comparison</title>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
   <style>
     body {
       font-family: sans-serif;
@@ -26,7 +27,7 @@
     .note {
       background: #fee;
       border: solid 1px #fcc;
-      padding: 1ex 1.5ex;
+      padding: 8px;
     }
 
     table {
@@ -46,9 +47,25 @@
       background: #dfd;
     }
 
+    .worst {
+      background: #ffbdbd;
+    }
+
     #results a {
       color: inherit;
       text-decoration: inherit;
+    }
+
+    td:nth-child(even) {
+      border-left: 2px solid black;
+    }
+
+    tr:nth-child(odd) {
+      background-color: #f1f1f1;
+    }
+
+    .pct {
+      color: #555;
     }
   </style>
 </head>
